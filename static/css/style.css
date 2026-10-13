@@ -109,6 +109,28 @@ input[aria-invalid="true"] { border-color: var(--erro); background: var(--erro-f
   font-size: 0.85rem;
 }
 
+/* Foto do componente: oculta até o mouse passar sobre o nome ou o seletor. */
+.com-previa { position: relative; display: inline-block; }
+.campo .com-previa { display: block; }
+.previa {
+  display: none;
+  /* fixed para não ser cortada pela rolagem da tabela; a posição é calculada no script */
+  position: fixed;
+  z-index: 10;
+  width: auto;
+  height: auto;
+  max-width: 180px;
+  max-height: 180px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  box-shadow: 0 6px 18px rgba(31, 41, 51, 0.18);
+  pointer-events: none;
+}
+.com-previa:hover > .previa:not([hidden]) { display: block; }
+.tabela .com-previa { cursor: help; text-decoration: underline dotted var(--texto-suave); text-underline-offset: 3px; }
+
 .mensagem { margin: 12px 0 0; padding: 10px 12px; border-radius: var(--raio); background: var(--erro-fundo); color: var(--erro); }
 
 .tabela-rolavel { overflow-x: auto; max-height: 460px; overflow-y: auto; }
@@ -153,4 +175,5 @@ input[aria-invalid="true"] { border-color: var(--erro); background: var(--erro-f
   .painel { border: none; padding: 0; }
   .tabela-rolavel { max-height: none; overflow: visible; }
   .tabela input[type="number"] { border: none; background: none; }
+  .previa { display: none !important; }
 }

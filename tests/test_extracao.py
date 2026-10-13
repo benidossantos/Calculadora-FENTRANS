@@ -46,3 +46,16 @@ def test_amostra_manual_de_celulas():
     assert por_id["trecho-reto"]["valores"]["pvc"]["2"] == "1"             # K64
     assert "pvc" not in por_id["registro-de-globo"]["valores"]
     assert "metal" not in por_id["filtro-y"]["valores"]
+
+
+def test_cada_linha_da_planilha_tem_sua_foto():
+    base = json.loads(Path(SAIDA_PADRAO).read_text(encoding="utf-8"))
+    pasta_static = Path(SAIDA_PADRAO).parent.parent / "static"
+    fotos = 0
+    for componente in base["componentes"]:
+        assert set(componente["imagens"]) == set(componente["valores"]), componente["id"]
+        for material, caminho in componente["imagens"].items():
+            assert caminho.startswith(f"img/componentes/{componente['id']}-{material}.")
+            assert (pasta_static / caminho).stat().st_size > 0
+            fotos += 1
+    assert fotos == 64

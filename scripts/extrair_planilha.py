@@ -15,6 +15,8 @@ import json
 import re
 import sys
 import unicodedata
+import xml.etree.ElementTree as ET
+import zipfile
 from datetime import date
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
@@ -24,6 +26,8 @@ import openpyxl
 RAIZ = Path(__file__).resolve().parent.parent
 PLANILHA_PADRAO = RAIZ / "dados" / "fonte" / "1 Perda de Carga Localizada.xlsx"
 SAIDA_PADRAO = RAIZ / "dados" / "comprimentos_equivalentes.json"
+IMAGENS_PADRAO = RAIZ / "static" / "img" / "componentes"
+PREFIXO_URL_IMAGENS = "img/componentes"
 
 ABA = "Plan1"
 CABECALHOS_FIXOS = {"A": "Descrição", "B": "Foto", "C": "Material"}
@@ -121,13 +125,80 @@ def conferir_cabecalho(aba):
             raise ErroPlanilha(f"{letra}1: esperado {esperado!r}, encontrado {encontrado!r}")
 
 
-def extrair(caminho_planilha):
+_NS = {
+    "pr": "http://schemas.openxmlformats.org/package/2006/relationships",
+    "m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+    "xdr": "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
+    "a": "http://schemas.openxmlformats.org/drawingml/2006/main",
+}
+_ATRIBUTO_RID = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"
+_ATRIBUTO_EMBED = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed"
+
+
+def _relacoes(pacote, caminho_parte):
+    """Lê o arquivo .rels de uma parte do pacote: {rId: caminho absoluto no zip}."""
+    pasta, nome = caminho_parte.rsplit("/", 1)
+    caminho_rels = f"{pasta}/_rels/{nome}.rels"
+    if caminho_rels not in pacote.namelist():
+        return {}
+    relacoes = {}
+    for rel in ET.fromstring(pacote.read(caminho_rels)).findall("pr:Relationship", _NS):
+        alvo = rel.get("Target")
+        partes = (alvo.lstrip("/") if alvo.startswith("/") else f"{pasta}/{alvo}").split("/")
+        normalizado = []
+        for parte in partes:
+            if parte == "..":
+                normalizado.pop()
+            elif parte not in ("", "."):
+                normalizado.append(parte)
+        relacoes[rel.get("Id")] = "/".join(normalizado)
+    return relacoes
+
+
+def ler_imagens_por_linha(caminho_planilha):
+    """Fotos da coluna B da aba, indexadas pela linha da planilha: {linha: (bytes, extensão)}.
+
+    Lido direto do XML do pacote .xlsx, porque o openpyxl só carrega imagens
+    quando o Pillow está instalado.
+    """
+    with zipfile.ZipFile(caminho_planilha) as pacote:
+        livro = ET.fromstring(pacote.read("xl/workbook.xml"))
+        abas = {a.get("name"): a.get(_ATRIBUTO_RID) for a in livro.find("m:sheets", _NS)}
+        caminho_aba = _relacoes(pacote, "xl/workbook.xml")[abas[ABA]]
+        aba = ET.fromstring(pacote.read(caminho_aba))
+        desenho = aba.find("m:drawing", _NS)
+        if desenho is None:
+            return {}
+        caminho_desenho = _relacoes(pacote, caminho_aba)[desenho.get(_ATRIBUTO_RID)]
+        midias = _relacoes(pacote, caminho_desenho)
+
+        imagens = {}
+        for ancora in ET.fromstring(pacote.read(caminho_desenho)):
+            inicio = ancora.find("xdr:from", _NS)
+            blip = ancora.find(".//xdr:pic//a:blip", _NS)
+            if inicio is None or blip is None:
+                continue  # formas sem imagem
+            linha = int(inicio.find("xdr:row", _NS).text) + 1
+            if linha in imagens:
+                raise ErroPlanilha(f"linha {linha}: mais de uma imagem")
+            caminho_midia = midias[blip.get(_ATRIBUTO_EMBED)]
+            imagens[linha] = (pacote.read(caminho_midia), Path(caminho_midia).suffix.lower())
+        return imagens
+
+
+def extrair(caminho_planilha, pasta_imagens=None):
+    """Monta a base de referência. Com pasta_imagens, grava também as fotos dos componentes."""
     livro = openpyxl.load_workbook(caminho_planilha, read_only=False, data_only=True)
     if ABA not in livro.sheetnames:
         raise ErroPlanilha(f"aba {ABA!r} não encontrada (abas: {livro.sheetnames})")
     aba = livro[ABA]
     conferir_cabecalho(aba)
     diametros = ler_diametros(aba)
+    imagens = ler_imagens_por_linha(caminho_planilha)
+    if pasta_imagens is not None:
+        Path(pasta_imagens).mkdir(parents=True, exist_ok=True)
+        for antiga in Path(pasta_imagens).iterdir():
+            antiga.unlink()
 
     componentes = {}
     materiais = {}
@@ -152,6 +223,7 @@ def extrair(caminho_planilha):
             "unidade_quantidade": "m" if componente_id in COMPONENTES_MEDIDOS_EM_METROS else "un",
             "valores": {},
             "celulas": {},
+            "imagens": {},
         })
         if componente["nome"] != nome:
             raise ErroPlanilha(f"linha {linha}: id {componente_id!r} colide com {componente['nome']!r}")
@@ -169,6 +241,13 @@ def extrair(caminho_planilha):
             celulas[diametro["id"]] = celula
         componente["valores"][material_id] = valores
         componente["celulas"][material_id] = celulas
+
+        if linha in imagens:
+            conteudo, extensao = imagens[linha]
+            nome_arquivo = f"{componente_id}-{material_id}{extensao}"
+            componente["imagens"][material_id] = f"{PREFIXO_URL_IMAGENS}/{nome_arquivo}"
+            if pasta_imagens is not None:
+                (Path(pasta_imagens) / nome_arquivo).write_bytes(conteudo)
 
     return {
         "metadados": {
@@ -193,10 +272,11 @@ def main(argumentos=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--planilha", type=Path, default=PLANILHA_PADRAO)
     parser.add_argument("--saida", type=Path, default=SAIDA_PADRAO)
+    parser.add_argument("--imagens", type=Path, default=IMAGENS_PADRAO)
     args = parser.parse_args(argumentos)
     try:
-        base = extrair(args.planilha)
-    except (ErroPlanilha, FileNotFoundError) as erro:
+        base = extrair(args.planilha, args.imagens)
+    except (ErroPlanilha, FileNotFoundError, KeyError, zipfile.BadZipFile) as erro:
         print(f"Erro ao extrair a planilha: {erro}", file=sys.stderr)
         return 1
     args.saida.parent.mkdir(parents=True, exist_ok=True)
@@ -204,6 +284,8 @@ def main(argumentos=None):
     total = sum(len(v) for c in base["componentes"] for v in c["valores"].values())
     print(f"{len(base['componentes'])} componentes, {len(base['materiais'])} materiais, "
           f"{len(base['diametros'])} diâmetros, {total} valores -> {args.saida.name}")
+    fotos = sum(len(c["imagens"]) for c in base["componentes"])
+    print(f"{fotos} imagens -> {args.imagens.name}/")
     return 0
 
 

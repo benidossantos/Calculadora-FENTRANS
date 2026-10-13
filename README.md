@@ -9,6 +9,7 @@ O usuário escolhe material, diâmetro nominal e componente, informa a quantidad
 - Seleção de **material** (PVC ou Metal), apenas entre os que existem na planilha.
 - Seleção do **diâmetro nominal** em polegadas (1/4" a 14"), com opção de exibir a designação **DN** em mm.
 - Lista de **componentes filtrada** pelo material e diâmetro escolhidos, mostrando o valor unitário tabelado.
+- **Foto de cada componente**, extraída da coluna "Foto" da planilha para o material escolhido. Ela fica oculta e só aparece ao passar o mouse sobre o seletor de componente ou sobre o nome do item na tabela.
 - **Quantidade** inteira e positiva para peças. O item *Trecho Reto* aceita metros com até 2 casas decimais (ver Limitações).
 - Vários componentes no mesmo cálculo, inclusive com materiais e diâmetros diferentes; o mesmo componente adicionado de novo soma a quantidade.
 - Alteração de quantidade, remoção de itens, limpeza da lista e novo cálculo, sem recarregar a página.
@@ -43,6 +44,7 @@ calculadora-comprimento-equivalente/
 │   ├── calculadora_service.py     # LE_item = LE_unitário × Q; LE_total = Σ LE_item
 │   └── erros.py                   # exceções com mensagens para o usuário
 ├── templates/index.html
+├── static/img/componentes/        # fotos extraídas da planilha (uma por componente e material)
 ├── static/css/style.css
 ├── static/js/script.js
 └── tests/
@@ -82,7 +84,7 @@ Abra <http://127.0.0.1:5000> no navegador. O servidor escuta apenas na própria 
 python -m pytest
 ```
 
-Resultado da última execução: **52 testes aprovados**. Eles cobrem os oito cenários obrigatórios com valores reais da planilha (um componente, três unidades, componentes diferentes, remoção, combinação inexistente, quantidades inválidas, lista vazia e precisão), as rotas da API e a conferência das 1.088 células extraídas.
+Resultado da última execução: **54 testes aprovados**. Eles cobrem os oito cenários obrigatórios com valores reais da planilha (um componente, três unidades, componentes diferentes, remoção, combinação inexistente, quantidades inválidas, lista vazia e precisão), as rotas da API e a conferência das 1.088 células extraídas.
 
 ## Fórmula
 
@@ -107,6 +109,7 @@ Os cálculos usam `Decimal` com os valores exatos da tabela, sem arredondamento 
 - Fonte: `1 Perda de Carga Localizada.xlsx`, aba `Plan1`. Colunas: Descrição, Foto, Material e 17 diâmetros (1/4" a 14").
 - 35 componentes, 64 combinações componente/material, 1.088 valores. Não há células vazias; as lacunas são de material: União com Joelho 90°, Registro de Ângulo, Registro de Globo e Válvulas de Retenção existem só em Metal, e Filtro Y só em PVC.
 - A planilha guarda os valores como texto com vírgula (`"0,35"`). No JSON eles ficam como texto decimal com ponto (`"0.35"`) e são lidos como `Decimal`. Cada valor guarda a célula de origem (`"celulas"`), para auditoria.
+- As 64 fotos da coluna "Foto" são gravadas em `static/img/componentes/<componente>-<material>.<ext>` e referenciadas no campo `"imagens"` do JSON. A associação é feita pela linha em que cada foto está ancorada na planilha.
 - Combinações ausentes não aparecem no JSON e nunca viram zero. A API responde 422 com a mensagem "Combinação não disponível na tabela".
 - **Unidade:** a planilha não informa; a tabela reproduzida nos documentos da disciplina se intitula "Diâmetro nominal X Equivalência em **metros** de canalização".
 
@@ -129,5 +132,5 @@ Os cálculos usam `Decimal` com os valores exatos da tabela, sem arredondamento 
   python -m pytest
   ```
 
-  O script falha com mensagem clara se encontrar cabeçalho inesperado, diâmetro desconhecido, valor não numérico ou componente duplicado. Os testes de extração conferem cada valor do JSON com a célula de origem. Os testes de cálculo usam valores reais da planilha atual; se a planilha mudar, ajuste-os aos novos valores.
+  O script também regrava as fotos em `static/img/componentes/`. Ele falha com mensagem clara se encontrar cabeçalho inesperado, diâmetro desconhecido, valor não numérico ou componente duplicado. Os testes de extração conferem cada valor do JSON com a célula de origem. Os testes de cálculo usam valores reais da planilha atual; se a planilha mudar, ajuste-os aos novos valores.
 - Os dados enviados pelo navegador nunca alteram a base: o servidor só a lê, e qualquer valor unitário enviado pelo cliente é ignorado.

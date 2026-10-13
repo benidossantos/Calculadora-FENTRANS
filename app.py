@@ -4,7 +4,7 @@ import json
 from dataclasses import asdict
 from decimal import Decimal
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, url_for
 
 from services.calculadora_service import calcular
 from services.dados_service import CAMINHO_PADRAO, BaseReferencia
@@ -62,7 +62,11 @@ def create_app(caminho_base=CAMINHO_PADRAO):
     def componentes():
         material = request.args.get("material") or None
         diametro = request.args.get("diametro") or None
-        return jsonify(base.listar_componentes(material, diametro))
+        componentes = base.listar_componentes(material, diametro)
+        for componente in componentes:
+            if componente.get("imagem"):
+                componente["imagem"] = url_for("static", filename=componente["imagem"])
+        return jsonify(componentes)
 
     @app.post("/api/calcular")
     def calcular_comprimento():

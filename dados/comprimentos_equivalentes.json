@@ -6,7 +6,7 @@
     "origem_da_unidade": "Tabela de referência reproduzida nos documentos da disciplina: 'Diâmetro nominal X Equivalência em metros de canalização'.",
     "representacao_dos_valores": "Texto decimal exato com ponto (ex.: '0.35'), lido como Decimal pelo backend. Combinações ausentes na planilha não aparecem em 'valores'.",
     "celulas_vazias_na_fonte": [],
-    "extraido_em": "2026-10-10"
+    "extraido_em": "2026-10-13"
   },
   "materiais": [
     {
@@ -206,6 +206,10 @@
           "12": "S3",
           "14": "T3"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/joelho-90-pvc.png",
+        "metal": "img/componentes/joelho-90-metal.jpeg"
       }
     },
     {
@@ -291,6 +295,10 @@
           "12": "S5",
           "14": "T5"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/joelho-45-pvc.png",
+        "metal": "img/componentes/joelho-45-metal.jpeg"
       }
     },
     {
@@ -376,6 +384,10 @@
           "12": "S7",
           "14": "T7"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/joelho-90-com-saida-lateral-pvc.png",
+        "metal": "img/componentes/joelho-90-com-saida-lateral-metal.jpeg"
       }
     },
     {
@@ -461,6 +473,10 @@
           "12": "S9",
           "14": "T9"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/joelho-90-com-reducao-pvc.png",
+        "metal": "img/componentes/joelho-90-com-reducao-metal.jpeg"
       }
     },
     {
@@ -546,6 +562,10 @@
           "12": "S11",
           "14": "T11"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/curva-90-pvc.jpeg",
+        "metal": "img/componentes/curva-90-metal.jpeg"
       }
     },
     {
@@ -631,6 +651,10 @@
           "12": "S13",
           "14": "T13"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/curva-45-pvc.jpg",
+        "metal": "img/componentes/curva-45-metal.jpeg"
       }
     },
     {
@@ -716,6 +740,10 @@
           "12": "S15",
           "14": "T15"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/curva-180-pvc.png",
+        "metal": "img/componentes/curva-180-metal.jpeg"
       }
     },
     {
@@ -801,6 +829,10 @@
           "12": "S17",
           "14": "T17"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/cruzeta-passagem-direta-pvc.jpg",
+        "metal": "img/componentes/cruzeta-passagem-direta-metal.jpeg"
       }
     },
     {
@@ -886,6 +918,10 @@
           "12": "S19",
           "14": "T19"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/cruzeta-passagem-lateral-pvc.jpg",
+        "metal": "img/componentes/cruzeta-passagem-lateral-metal.jpeg"
       }
     },
     {
@@ -971,6 +1007,10 @@
           "12": "S21",
           "14": "T21"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/curva-de-transposicao-pvc.jpeg",
+        "metal": "img/componentes/curva-de-transposicao-metal.jpeg"
       }
     },
     {
@@ -1056,6 +1096,10 @@
           "12": "S23",
           "14": "T23"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/bucha-de-reducao-pvc.jpg",
+        "metal": "img/componentes/bucha-de-reducao-metal.jpeg"
       }
     },
     {
@@ -1141,6 +1185,10 @@
           "12": "S25",
           "14": "T25"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/luva-de-reducao-pvc.jpg",
+        "metal": "img/componentes/luva-de-reducao-metal.jpeg"
       }
     },
     {
@@ -1226,6 +1274,10 @@
           "12": "S27",
           "14": "T27"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/luva-pvc.jpg",
+        "metal": "img/componentes/luva-metal.jpeg"
       }
     },
     {
@@ -1311,6 +1363,10 @@
           "12": "S29",
           "14": "T29"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/niple-pvc.jpeg",
+        "metal": "img/componentes/niple-metal.jpeg"
       }
     },
     {
@@ -1396,6 +1452,10 @@
           "12": "S31",
           "14": "T31"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/niple-de-reducao-pvc.png",
+        "metal": "img/componentes/niple-de-reducao-metal.png"
       }
     },
     {
@@ -1481,6 +1541,10 @@
           "12": "S33",
           "14": "T33"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/te-a-45-pvc.png",
+        "metal": "img/componentes/te-a-45-metal.jpeg"
       }
     },
     {
@@ -1566,6 +1630,10 @@
           "12": "S35",
           "14": "T35"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/te-passagem-direta-pvc.png",
+        "metal": "img/componentes/te-passagem-direta-metal.jpeg"
       }
     },
     {
@@ -1651,6 +1719,10 @@
           "12": "S37",
           "14": "T37"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/te-passagem-lateral-pvc.png",
+        "metal": "img/componentes/te-passagem-lateral-metal.jpeg"
       }
     },
     {
@@ -1736,6 +1808,10 @@
           "12": "S39",
           "14": "T39"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/te-passagem-bilateral-pvc.png",
+        "metal": "img/componentes/te-passagem-bilateral-metal.jpeg"
       }
     },
     {
@@ -1821,6 +1897,10 @@
           "12": "S41",
           "14": "T41"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/te-com-curva-dupla-pvc.jpeg",
+        "metal": "img/componentes/te-com-curva-dupla-metal.jpeg"
       }
     },
     {
@@ -1906,6 +1986,10 @@
           "12": "S43",
           "14": "T43"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/te-com-reducao-pvc.jpeg",
+        "metal": "img/componentes/te-com-reducao-metal.jpeg"
       }
     },
     {
@@ -1991,6 +2075,10 @@
           "12": "S45",
           "14": "T45"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/saida-entrada-de-canalizacao-pvc.png",
+        "metal": "img/componentes/saida-entrada-de-canalizacao-metal.png"
       }
     },
     {
@@ -2076,6 +2164,10 @@
           "12": "S47",
           "14": "T47"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/saida-entrada-de-canalizacao-flange-sextavado-pvc.jpeg",
+        "metal": "img/componentes/saida-entrada-de-canalizacao-flange-sextavado-metal.jpeg"
       }
     },
     {
@@ -2161,6 +2253,10 @@
           "12": "S49",
           "14": "T49"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/uniao-pvc.jpg",
+        "metal": "img/componentes/uniao-metal.jpeg"
       }
     },
     {
@@ -2208,6 +2304,9 @@
           "12": "S50",
           "14": "T50"
         }
+      },
+      "imagens": {
+        "metal": "img/componentes/uniao-com-joelho-90-metal.jpeg"
       }
     },
     {
@@ -2293,6 +2392,10 @@
           "12": "S52",
           "14": "T52"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/engate-rapido-pvc.jpeg",
+        "metal": "img/componentes/engate-rapido-metal.jpeg"
       }
     },
     {
@@ -2378,6 +2481,10 @@
           "12": "S54",
           "14": "T54"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/registro-de-gaveta-aberto-pvc.png",
+        "metal": "img/componentes/registro-de-gaveta-aberto-metal.jpeg"
       }
     },
     {
@@ -2463,6 +2570,10 @@
           "12": "S56",
           "14": "T56"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/valvula-de-esfera-aberto-pvc.jpeg",
+        "metal": "img/componentes/valvula-de-esfera-aberto-metal.jpeg"
       }
     },
     {
@@ -2510,6 +2621,9 @@
           "12": "S57",
           "14": "T57"
         }
+      },
+      "imagens": {
+        "metal": "img/componentes/registro-de-angulo-hidrante-metal.jpeg"
       }
     },
     {
@@ -2557,6 +2671,9 @@
           "12": "S58",
           "14": "T58"
         }
+      },
+      "imagens": {
+        "metal": "img/componentes/registro-de-globo-metal.jpeg"
       }
     },
     {
@@ -2604,6 +2721,9 @@
           "12": "S59",
           "14": "T59"
         }
+      },
+      "imagens": {
+        "metal": "img/componentes/valvula-de-retencao-horizontal-metal.jpeg"
       }
     },
     {
@@ -2651,6 +2771,9 @@
           "12": "S60",
           "14": "T60"
         }
+      },
+      "imagens": {
+        "metal": "img/componentes/valvula-de-retencao-vertical-metal.jpeg"
       }
     },
     {
@@ -2736,6 +2859,10 @@
           "12": "S62",
           "14": "T62"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/valvula-de-pe-com-crivo-pvc.jpeg",
+        "metal": "img/componentes/valvula-de-pe-com-crivo-metal.jpeg"
       }
     },
     {
@@ -2783,6 +2910,9 @@
           "12": "S63",
           "14": "T63"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/filtro-y-pvc.jpeg"
       }
     },
     {
@@ -2868,6 +2998,10 @@
           "12": "S65",
           "14": "T65"
         }
+      },
+      "imagens": {
+        "pvc": "img/componentes/trecho-reto-pvc.png",
+        "metal": "img/componentes/trecho-reto-metal.png"
       }
     }
   ]

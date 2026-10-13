@@ -31,7 +31,8 @@ class BaseReferencia:
     def listar_componentes(self, material_id=None, diametro_id=None):
         """Componentes que possuem valor para o material e o diâmetro informados.
 
-        Quando os dois filtros são informados, cada componente vem com seu
+        Com o material informado, cada componente traz o caminho da sua foto
+        (relativo à pasta static), e com material e diâmetro traz também o
         valor unitário tabelado.
         """
         if material_id is not None:
@@ -54,6 +55,8 @@ class BaseReferencia:
                 "unidade_quantidade": componente["unidade_quantidade"],
                 "materiais": materiais,
             }
+            if material_id is not None:
+                item["imagem"] = componente.get("imagens", {}).get(material_id)
             if material_id is not None and diametro_id is not None:
                 item["valor_unitario"] = componente["valores"][material_id][diametro_id]
             resultado.append(item)

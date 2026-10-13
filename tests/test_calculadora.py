@@ -208,3 +208,12 @@ def test_api_ignora_valores_enviados_pelo_cliente(cliente):
     resposta = cliente.post("/api/calcular", json={"itens": [adulterado]})
     assert resposta.get_json()["itens"][0]["valor_unitario"] == "1.20"
     assert resposta.get_json()["comprimento_total"] == "6.00"
+
+
+def test_api_componentes_traz_foto_do_material(cliente):
+    componentes = cliente.get("/api/componentes?material=metal&diametro=3/4").get_json()
+    joelho = next(c for c in componentes if c["id"] == "joelho-90")
+    assert joelho["imagem"] == "/static/img/componentes/joelho-90-metal.jpeg"
+    resposta = cliente.get(joelho["imagem"])
+    assert resposta.status_code == 200 and resposta.mimetype.startswith("image/")
+    resposta.close()

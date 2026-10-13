@@ -21,6 +21,7 @@ const campos = {
   material: el("material"),
   diametro: el("diametro"),
   componente: el("componente"),
+  previaComponente: el("previa-componente"),
   quantidade: el("quantidade"),
   rotuloQuantidade: el("rotulo-quantidade"),
   notaDn: el("nota-dn"),
@@ -147,11 +148,50 @@ async function atualizarComponentes() {
     );
   }
   campos.botaoAdicionar.disabled = estado.componentes.length === 0;
-  ajustarCampoQuantidade();
+  aoSelecionarComponente();
 }
 
 function componenteSelecionado() {
   return estado.componentes.find((c) => c.id === campos.componente.value);
+}
+
+// Foto do componente: fica oculta e só aparece com o mouse sobre o nome (ver .com-previa no CSS).
+function criarPrevia(imagem, nome) {
+  const previa = document.createElement("img");
+  previa.className = "previa";
+  previa.src = imagem;
+  previa.alt = `Foto: ${nome}`;
+  previa.loading = "lazy";
+  return previa;
+}
+
+function posicionarPrevia(evento) {
+  const alvo = evento.target.closest?.(".com-previa");
+  const previa = alvo?.querySelector(".previa");
+  if (!previa) return;
+  const area = alvo.getBoundingClientRect();
+  const margem = 8;
+  const largura = 192;
+  const altura = 192;
+  const esquerda = Math.min(area.left, window.innerWidth - largura - margem);
+  const abaixo = area.bottom + 6;
+  const topo = abaixo + altura > window.innerHeight ? Math.max(margem, area.top - altura - 6) : abaixo;
+  previa.style.left = `${Math.max(margem, esquerda)}px`;
+  previa.style.top = `${topo}px`;
+}
+
+function atualizarPreviaFormulario() {
+  const componente = componenteSelecionado();
+  campos.previaComponente.hidden = !componente?.imagem;
+  if (componente?.imagem) {
+    campos.previaComponente.src = componente.imagem;
+    campos.previaComponente.alt = `Foto: ${componente.nome}`;
+  }
+}
+
+function aoSelecionarComponente() {
+  ajustarCampoQuantidade();
+  atualizarPreviaFormulario();
 }
 
 function ajustarCampoQuantidade() {
@@ -202,6 +242,7 @@ function adicionarComponente(evento) {
       unidadeQuantidade: componente.unidade_quantidade,
       quantidade,
       valorUnitario: componente.valor_unitario,
+      imagem: componente.imagem,
     });
   }
   campos.quantidade.value = "1";
@@ -244,8 +285,17 @@ function renderizarItens() {
     const celulaAcao = celula("", "nao-imprimir");
     celulaAcao.append(remover);
 
+    const celulaNome = celula("");
+    const nome = document.createElement("span");
+    nome.textContent = item.nome;
+    if (item.imagem) {
+      nome.className = "com-previa";
+      nome.append(criarPrevia(item.imagem, item.nome));
+    }
+    celulaNome.append(nome);
+
     linha.append(
-      celula(item.nome),
+      celulaNome,
       celula(item.materialRotulo),
       celula(rotuloDiametro(diametro)),
       celulaQuantidade,
@@ -357,7 +407,8 @@ function imprimirMemorial() {
 
 campos.material.addEventListener("change", atualizarComponentes);
 campos.diametro.addEventListener("change", atualizarComponentes);
-campos.componente.addEventListener("change", ajustarCampoQuantidade);
+campos.componente.addEventListener("change", aoSelecionarComponente);
+document.addEventListener("mouseover", posicionarPrevia);
 campos.form.addEventListener("submit", adicionarComponente);
 campos.botaoCalcular.addEventListener("click", calcular);
 campos.botaoLimpar.addEventListener("click", limparCalculo);
