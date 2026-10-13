@@ -1,0 +1,8 @@
+# Execução da aplicação
+Flask>=3.0,<4
+
+# Regenerar a base JSON a partir da planilha (scripts/extrair_planilha.py) e testes de extração
+openpyxl>=3.1,<4
+
+# Testes automatizados
+pytest>=8,<10

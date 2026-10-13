@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculadora de Comprimento Equivalente</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="cabecalho">
+    <h1>Calculadora de Comprimento Equivalente</h1>
+    <p>Calcule o comprimento equivalente de acessórios hidráulicos a partir de tabelas de referência.</p>
+  </header>
+
+  <main class="conteudo">
+    <section class="painel nao-imprimir" aria-labelledby="titulo-configuracao">
+      <h2 id="titulo-configuracao">Adicionar componente</h2>
+      <form id="form-componente" novalidate>
+        <div class="campos">
+          <label class="campo">
+            <span>Material</span>
+            <select id="material" required></select>
+          </label>
+
+          <div class="campo">
+            <div class="rotulo-com-opcao">
+              <label for="diametro">Diâmetro nominal</label>
+              <span class="alternador" role="radiogroup" aria-label="Unidade de exibição do diâmetro">
+                <label><input type="radio" name="exibicao-diametro" value="pol" checked> pol</label>
+                <label><input type="radio" name="exibicao-diametro" value="mm"> mm (DN)</label>
+              </span>
+            </div>
+            <select id="diametro" required></select>
+            <small id="nota-dn" class="nota" hidden>DN é a designação nominal, não o diâmetro interno do tubo.</small>
+          </div>
+
+          <label class="campo campo-largo">
+            <span>Componente</span>
+            <select id="componente" required></select>
+          </label>
+
+          <label class="campo campo-quantidade">
+            <span id="rotulo-quantidade">Quantidade</span>
+            <input id="quantidade" type="number" min="1" step="1" value="1" inputmode="numeric" required>
+          </label>
+        </div>
+        <div class="acoes">
+          <button type="submit" id="botao-adicionar" class="botao botao-primario">Adicionar componente</button>
+        </div>
+        <p id="mensagem-formulario" class="mensagem" role="alert" hidden></p>
+      </form>
+    </section>
+
+    <section class="painel" aria-labelledby="titulo-lista">
+      <div class="titulo-secao">
+        <h2 id="titulo-lista">Componentes adicionados</h2>
+        <span id="contador-itens" class="contador">0 itens</span>
+      </div>
+      <div class="tabela-rolavel">
+        <table class="tabela">
+          <thead>
+            <tr>
+              <th>Componente</th>
+              <th>Material</th>
+              <th>Diâmetro</th>
+              <th class="numero">Quantidade</th>
+              <th class="numero">L<sub>eq</sub> unitário ({{ unidade }})</th>
+              <th class="numero">L<sub>eq</sub> do item ({{ unidade }})</th>
+              <th class="nao-imprimir"><span class="sr-only">Ações</span></th>
+            </tr>
+          </thead>
+          <tbody id="corpo-tabela"></tbody>
+        </table>
+      </div>
+      <p id="lista-vazia" class="lista-vazia">Nenhum componente adicionado.</p>
+      <div class="acoes nao-imprimir">
+        <button type="button" id="botao-calcular" class="botao botao-primario">Calcular comprimento equivalente</button>
+        <button type="button" id="botao-limpar" class="botao botao-secundario">Limpar cálculo</button>
+        <button type="button" id="botao-imprimir" class="botao botao-secundario" hidden>Imprimir / salvar PDF</button>
+      </div>
+      <p id="mensagem-calculo" class="mensagem" role="alert" hidden></p>
+    </section>
+
+    <section class="painel resultado" aria-live="polite">
+      <h2>Comprimento Equivalente Total</h2>
+      <p class="valor-total"><span id="valor-total">—</span> <span class="unidade">{{ unidade }}</span></p>
+      <p id="estado-resultado" class="estado-resultado">Adicione componentes e clique em calcular.</p>
+      <p class="formula">L<sub>eq,total</sub> = Σ (L<sub>eq,unitário</sub> × Q)</p>
+      <p id="data-memorial" class="so-imprimir"></p>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    Valores da planilha “1 Perda de Carga Localizada.xlsx”, em metros de canalização. Fenômenos de Transporte, Universidade de Vassouras.
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
