@@ -6,53 +6,90 @@
   <title>Calculadora de Comprimento Equivalente</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
   <header class="cabecalho">
-    <h1>Calculadora de Comprimento Equivalente</h1>
-    <p>Calcule o comprimento equivalente de acessórios hidráulicos a partir de tabelas de referência.</p>
+    <!-- Logo -->
+    <div class="header-brand">
+      <p>HidroCalc</p>
+      <span>Calculadora Hidraulica</span>
+    </div>
+
+    <!-- Navegação -->
+    <nav class="main-nav">
+      <ul>
+        <li>
+          <a href="#conteudo" class="active">Calculadora</a>
+        </li>
+        <li>
+          <a href="#">Sobre o projeto</a>
+        </li>
+      </ul>
+    </nav>
   </header>
 
-  <main class="conteudo">
-    <section class="painel nao-imprimir" aria-labelledby="titulo-configuracao">
-      <h2 id="titulo-configuracao">Adicionar componente</h2>
-      <form id="form-componente" novalidate>
-        <div class="campos">
-          <label class="campo">
-            <span>Material</span>
+  <main class="conteudo" id="conteudo">
+    <div class="grid-topo">
+      <section class="painel nao-imprimir" aria-labelledby="titulo-configuracao">
+
+        <h2 id="titulo-configuracao">Dados da tubulação</h2>
+
+        <form class="form-style" id="form-componente" novalidate>
+          <div class="campo">
+            <label for="material">Material da tubulação</label>
             <select id="material" required></select>
-          </label>
+          </div>
 
           <div class="campo">
+            <label for="diametro">Diâmetro nominal</label>
+
             <div class="rotulo-com-opcao">
-              <label for="diametro">Diâmetro nominal</label>
+              <select id="diametro" required></select>
               <span class="alternador" role="radiogroup" aria-label="Unidade de exibição do diâmetro">
                 <label><input type="radio" name="exibicao-diametro" value="pol" checked> pol</label>
                 <label><input type="radio" name="exibicao-diametro" value="mm"> mm (DN)</label>
               </span>
             </div>
-            <select id="diametro" required></select>
+
             <small id="nota-dn" class="nota" hidden>DN é a designação nominal, não o diâmetro interno do tubo.</small>
           </div>
 
-          <label class="campo campo-largo">
-            <span>Componente</span>
-            <span class="com-previa">
-              <select id="componente" required></select>
-              <img id="previa-componente" class="previa" alt="" hidden>
-            </span>
-          </label>
+          <div class="comp-style">
+            <label class="campo campo-largo">
+              <span>Componente da tubulação</span>
+              <span class="com-previa">
+                <select id="componente" required></select>
+                <img id="previa-componente" class="previa" alt="" hidden>
+              </span>
+            </label>
 
-          <label class="campo campo-quantidade">
-            <span id="rotulo-quantidade">Quantidade</span>
-            <input id="quantidade" type="number" min="1" step="1" value="1" inputmode="numeric" required>
-          </label>
-        </div>
-        <div class="acoes">
-          <button type="submit" id="botao-adicionar" class="botao botao-primario">Adicionar componente</button>
-        </div>
-        <p id="mensagem-formulario" class="mensagem" role="alert" hidden></p>
-      </form>
-    </section>
+            <label class="campo campo-quantidade">
+              <span id="rotulo-quantidade">Quantidade</span>
+              <input id="quantidade" type="number" min="1" step="1" value="1" inputmode="numeric" required>
+            </label>
+          </div>
+
+          <div class="acoes">
+            <button type="submit" id="botao-adicionar" class="botao botao-primario">Adicionar componente</button>
+          </div>
+
+          <p id="mensagem-formulario" class="mensagem" role="alert" hidden></p>
+        </form>
+      </section>
+
+      <section class="painel resultado" aria-live="polite">
+        <h2>Resultado</h2>
+
+        <p>Comprimento Equivalente Total</p>
+        <p class="valor-total">
+          <span id="valor-total">—</span>
+          <span class="unidade">{{ unidade }}</span>
+        </p>
+        <p id="estado-resultado" class="estado-resultado">Adicione componentes e clique em calcular.</p>
+        <p class="formula">L<sub>eq,total</sub> = Σ (L<sub>eq,unitário</sub> × Q)</p>
+        <p id="data-memorial" class="so-imprimir"></p>
+      </section>
+    </div>
 
     <section class="painel" aria-labelledby="titulo-lista">
       <div class="titulo-secao">
@@ -77,20 +114,13 @@
       </div>
       <p id="lista-vazia" class="lista-vazia">Nenhum componente adicionado.</p>
       <div class="acoes nao-imprimir">
-        <button type="button" id="botao-calcular" class="botao botao-primario">Calcular comprimento equivalente</button>
-        <button type="button" id="botao-limpar" class="botao botao-secundario">Limpar cálculo</button>
+
+        <button type="button" id="botao-limpar" class="botao botao-secundario">Limpar</button>
         <button type="button" id="botao-imprimir" class="botao botao-secundario" hidden>Imprimir / salvar PDF</button>
       </div>
       <p id="mensagem-calculo" class="mensagem" role="alert" hidden></p>
     </section>
 
-    <section class="painel resultado" aria-live="polite">
-      <h2>Comprimento Equivalente Total</h2>
-      <p class="valor-total"><span id="valor-total">—</span> <span class="unidade">{{ unidade }}</span></p>
-      <p id="estado-resultado" class="estado-resultado">Adicione componentes e clique em calcular.</p>
-      <p class="formula">L<sub>eq,total</sub> = Σ (L<sub>eq,unitário</sub> × Q)</p>
-      <p id="data-memorial" class="so-imprimir"></p>
-    </section>
   </main>
 
   <footer class="rodape">

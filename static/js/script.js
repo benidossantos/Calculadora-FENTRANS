@@ -30,7 +30,7 @@ const campos = {
   corpoTabela: el("corpo-tabela"),
   listaVazia: el("lista-vazia"),
   contador: el("contador-itens"),
-  botaoCalcular: el("botao-calcular"),
+  //botaoCalcular: el("botao-calcular"),
   botaoLimpar: el("botao-limpar"),
   botaoImprimir: el("botao-imprimir"),
   mensagemCalculo: el("mensagem-calculo"),
@@ -310,9 +310,9 @@ function renderizarItens() {
   const total = estado.itens.length;
   campos.contador.textContent = `${total} ${total === 1 ? "item" : "itens"}`;
   campos.listaVazia.hidden = total > 0;
-  campos.botaoCalcular.disabled = total === 0;
+  //campos.botaoCalcular.disabled = total === 0;
   campos.botaoLimpar.disabled = total === 0;
-  campos.botaoCalcular.title = total === 0 ? "Adicione pelo menos um componente para calcular." : "";
+  //campos.botaoCalcular.title = total === 0 ? "Adicione pelo menos um componente para calcular." : "";
 }
 
 function alterarQuantidade(indice, entrada) {
@@ -339,11 +339,14 @@ function limparCalculo() {
 
 // ---------- Resultado ----------
 
-function marcarListaAlterada() {
-  estado.resultado = null;
-  mostrarMensagem(campos.mensagemCalculo, "");
+async function marcarListaAlterada() {
   renderizarItens();
-  renderizarResultado();
+  if (estado.itens.length > 0) {
+    await calcular(); // Dispara o cálculo automático na API imediatamente
+  } else {
+    estado.resultado = null;
+    renderizarResultado();
+  }
 }
 
 function renderizarResultado() {
@@ -381,7 +384,7 @@ async function calcular() {
       quantidade: item.unidadeQuantidade === "m" ? item.quantidade.replace(",", ".") : Number(item.quantidade),
     })),
   };
-  campos.botaoCalcular.disabled = true;
+ // campos.botaoCalcular.disabled = true;
   try {
     estado.resultado = await requisitar("/api/calcular", {
       method: "POST",
@@ -410,7 +413,7 @@ campos.diametro.addEventListener("change", atualizarComponentes);
 campos.componente.addEventListener("change", aoSelecionarComponente);
 document.addEventListener("mouseover", posicionarPrevia);
 campos.form.addEventListener("submit", adicionarComponente);
-campos.botaoCalcular.addEventListener("click", calcular);
+//campos.botaoCalcular?.addEventListener("click", calcular);
 campos.botaoLimpar.addEventListener("click", limparCalculo);
 campos.botaoImprimir.addEventListener("click", imprimirMemorial);
 document.querySelectorAll('input[name="exibicao-diametro"]').forEach((radio) => {
