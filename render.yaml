@@ -1,0 +1,8 @@
+# Publicação gratuita no Render (https://render.com): New > Blueprint > escolher este repositório.
+services:
+  - type: web
+    name: calculadora-fentrans
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt gunicorn
+    startCommand: gunicorn "app:create_app()"

@@ -155,7 +155,7 @@ input[aria-invalid="true"] { border-color: var(--erro); background: var(--erro-f
 .rodape { text-align: center; color: var(--texto-suave); font-size: 0.8rem; padding: 0 16px 24px; }
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.so-imprimir { display: none; }
+.so-imprimir, .so-imprimir-inline { display: none; }
 
 @media (max-width: 760px) {
   .campos { grid-template-columns: 1fr 1fr; }
@@ -173,8 +173,22 @@ input[aria-invalid="true"] { border-color: var(--erro); background: var(--erro-f
   body { background: #fff; }
   .nao-imprimir { display: none !important; }
   .so-imprimir { display: block; }
+  .so-imprimir-inline { display: inline; }
+  .cabecalho { display: none; }
+  .conteudo { padding: 0; gap: 16px; }
+  .cabecalho-memorial { border-bottom: 2px solid var(--primaria); padding-bottom: 8px; }
+  .cabecalho-memorial h2 { margin: 0 0 4px; font-size: 1.3rem; color: var(--primaria-escura); }
+  .cabecalho-memorial p { margin: 0; color: var(--texto-suave); font-size: 0.85rem; }
+  .tabela tr, .resultado { break-inside: avoid; }
+  .rodape { display: none; }
+  .tabela th, .tabela td { padding: 4px 6px; }
+  .tabela { font-size: 0.85rem; }
+  .painel h2 { margin-bottom: 8px; }
+  .painel.resultado { border: 2px solid var(--primaria); border-radius: var(--raio); padding: 10px; }
+  .valor-total { font-size: 1.8rem; }
+  .tabela thead th { position: static; }
   .painel { border: none; padding: 0; }
   .tabela-rolavel { max-height: none; overflow: visible; }
   .tabela input[type="number"] { border: none; background: none; }
-  .foto-tabela { width: 40px; height: 40px; }
+  .foto-tabela { width: 32px; height: 32px; }
 }

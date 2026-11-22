@@ -21,7 +21,7 @@ O usuário escolhe material, diâmetro nominal e componente, informa a quantidad
 - **Cálculo automático:** o total é recalculado pelo servidor a cada item adicionado, alterado ou removido, sem botão "Calcular" e sem recarregar a página.
 - Tabela de resultados com foto, componente, material, diâmetro, quantidade, L<sub>eq</sub> unitário e L<sub>eq</sub> do item, e painel em destaque com o **Comprimento Equivalente Total**.
 - Validação no navegador e no servidor, com mensagens claras para quantidade inválida, lista vazia, material, diâmetro ou componente inexistente, combinação sem valor tabelado e JSON malformado.
-- Memorial de cálculo pelo botão **Imprimir / salvar PDF** (usa a impressão do navegador, com data e hora).
+- **Memorial de cálculo em PDF** pelo botão **Imprimir / salvar PDF**: cabeçalho com disciplina, professor e data e hora; (1) detalhamento de cada conexão com foto, quantidade e comprimento equivalente; (2) lista de compras com as quantidades de cada peça; (3) comprimento equivalente total. Usa a impressão do navegador ("Salvar como PDF").
 
 ## Tecnologias
 
@@ -37,6 +37,7 @@ Calculadora-FENTRANS/
 ├── LICENSE                        # licença MIT (código aberto)
 ├── app.py                         # Flask: rotas, leitura do JSON da requisição, respostas de erro
 ├── requirements.txt
+├── render.yaml                    # configuração para publicar no Render (opcional)
 ├── README.md
 ├── dados/
 │   ├── comprimentos_equivalentes.json   # base de referência usada pela aplicação
@@ -86,6 +87,16 @@ python app.py
 ```
 
 Abra <http://127.0.0.1:5000> no navegador. O servidor escuta apenas na própria máquina e roda sem modo de depuração.
+
+## Publicar online (opcional)
+
+O arquivo `render.yaml` deixa o projeto pronto para o plano gratuito do [Render](https://render.com):
+
+1. Crie uma conta no Render e conecte sua conta do GitHub.
+2. Clique em **New > Blueprint** e escolha este repositório.
+3. Confirme. Em alguns minutos o Render mostra o endereço público da calculadora.
+
+No plano gratuito o servidor "dorme" quando fica sem uso; o primeiro acesso depois disso demora cerca de 1 minuto.
 
 ## Executar os testes
 

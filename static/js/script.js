@@ -42,6 +42,7 @@ const campos = {
   valorTotal: el("valor-total"),
   estadoResultado: el("estado-resultado"),
   dataMemorial: el("data-memorial"),
+  corpoListaCompras: el("corpo-lista-compras"),
 };
 
 // ---------- Utilitários ----------
@@ -469,10 +470,34 @@ async function calcular() {
   renderizarResultado();
 }
 
+// Lista de compras do memorial: cada peça com material, diâmetro e quantidade a comprar.
+function preencherListaCompras() {
+  const linhas = (estado.resultado?.itens ?? []).map((item) => {
+    const linha = document.createElement("tr");
+    const diametro = estado.diametros.find((d) => d.id === item.diametro_id);
+    const quantidade = item.unidade_quantidade === "m"
+      ? `${formatarDecimal(item.quantidade)} m de tubo`
+      : `${item.quantidade} ${item.quantidade === "1" ? "unidade" : "unidades"}`;
+    [item.componente, item.material, rotuloDiametro(diametro), quantidade].forEach((texto, indice) => {
+      const td = document.createElement("td");
+      td.textContent = texto;
+      if (indice === 3) td.className = "numero";
+      linha.append(td);
+    });
+    return linha;
+  });
+  campos.corpoListaCompras.replaceChildren(...linhas);
+}
+
 function imprimirMemorial() {
   const agora = new Date();
-  campos.dataMemorial.textContent = `Memorial de cálculo gerado em ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR")}.`;
+  campos.dataMemorial.textContent = `Gerado em ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR")}.`;
+  preencherListaCompras();
+  // O título da página vira o nome sugerido para o arquivo PDF.
+  const tituloOriginal = document.title;
+  document.title = `Memorial de calculo - comprimento equivalente - ${agora.toLocaleDateString("pt-BR").replaceAll("/", "-")}`;
   window.print();
+  document.title = tituloOriginal;
 }
 
 // ---------- Eventos ----------
