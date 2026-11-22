@@ -54,9 +54,9 @@
 
           <label class="campo campo-largo">
             <span>Componente</span>
-            <span class="com-previa">
+            <span class="com-foto">
               <select id="componente" required></select>
-              <img id="previa-componente" class="previa" alt="" hidden>
+              <img id="previa-componente" class="foto-formulario" alt="" hidden>
             </span>
           </label>
 
@@ -67,6 +67,7 @@
         </div>
         <div class="acoes">
           <button type="submit" id="botao-adicionar" class="botao botao-primario">Adicionar componente</button>
+          <button type="button" id="botao-exemplo" class="botao botao-secundario">Carregar exemplo da aula</button>
         </div>
         <p id="mensagem-formulario" class="mensagem" role="alert" hidden></p>
       </form>
@@ -81,6 +82,7 @@
         <table class="tabela">
           <thead>
             <tr>
+              <th>Foto</th>
               <th>Componente</th>
               <th>Material</th>
               <th>Diâmetro</th>
@@ -94,6 +96,7 @@
         </table>
       </div>
       <p id="lista-vazia" class="lista-vazia">Nenhum componente adicionado.</p>
+      <p id="nota-exemplo" class="nota-exemplo" hidden></p>
       <div class="acoes nao-imprimir">
         <button type="button" id="botao-limpar" class="botao botao-secundario">Limpar cálculo</button>
         <button type="button" id="botao-imprimir" class="botao botao-secundario" hidden>Imprimir / salvar PDF</button>

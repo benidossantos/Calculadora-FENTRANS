@@ -26,6 +26,8 @@ const campos = {
   diametro: el("diametro"),
   componente: el("componente"),
   previaComponente: el("previa-componente"),
+  botaoExemplo: el("botao-exemplo"),
+  notaExemplo: el("nota-exemplo"),
   quantidade: el("quantidade"),
   rotuloQuantidade: el("rotulo-quantidade"),
   notaDn: el("nota-dn"),
@@ -196,29 +198,14 @@ function componenteSelecionado() {
   return estado.componentes.find((c) => c.id === campos.componente.value);
 }
 
-// Foto do componente: fica oculta e só aparece com o mouse sobre o nome (ver .com-previa no CSS).
-function criarPrevia(imagem, nome) {
-  const previa = document.createElement("img");
-  previa.className = "previa";
-  previa.src = imagem;
-  previa.alt = `Foto: ${nome}`;
-  previa.loading = "lazy";
-  return previa;
-}
-
-function posicionarPrevia(evento) {
-  const alvo = evento.target.closest?.(".com-previa");
-  const previa = alvo?.querySelector(".previa");
-  if (!previa) return;
-  const area = alvo.getBoundingClientRect();
-  const margem = 8;
-  const largura = 192;
-  const altura = 192;
-  const esquerda = Math.min(area.left, window.innerWidth - largura - margem);
-  const abaixo = area.bottom + 6;
-  const topo = abaixo + altura > window.innerHeight ? Math.max(margem, area.top - altura - 6) : abaixo;
-  previa.style.left = `${Math.max(margem, esquerda)}px`;
-  previa.style.top = `${topo}px`;
+// Miniatura da foto do componente, exibida na coluna "Foto" da tabela.
+function criarFoto(imagem, nome) {
+  const foto = document.createElement("img");
+  foto.className = "foto-tabela";
+  foto.src = imagem;
+  foto.alt = `Foto: ${nome}`;
+  foto.loading = "lazy";
+  return foto;
 }
 
 function atualizarPreviaFormulario() {
@@ -333,17 +320,12 @@ function renderizarItens() {
     const celulaAcao = celula("", "nao-imprimir");
     celulaAcao.append(remover);
 
-    const celulaNome = celula("");
-    const nome = document.createElement("span");
-    nome.textContent = item.nome;
-    if (item.imagem) {
-      nome.className = "com-previa";
-      nome.append(criarPrevia(item.imagem, item.nome));
-    }
-    celulaNome.append(nome);
+    const celulaFoto = celula("");
+    if (item.imagem) celulaFoto.append(criarFoto(item.imagem, item.nome));
 
     linha.append(
-      celulaNome,
+      celulaFoto,
+      celula(item.nome),
       celula(item.materialRotulo),
       celula(rotuloDiametro(diametro)),
       celulaQuantidade,
@@ -385,6 +367,37 @@ function removerItem(indice) {
 
 function limparCalculo() {
   estado.itens = [];
+  mostrarNotaExemplo("");
+  marcarListaAlterada();
+}
+
+function mostrarNotaExemplo(texto) {
+  campos.notaExemplo.textContent = texto;
+  campos.notaExemplo.hidden = !texto;
+}
+
+// Substitui a lista pelo exercício da aula (slide 48), definido no servidor.
+async function carregarExemplo() {
+  let exemplo;
+  try {
+    exemplo = await requisitar("/api/exemplo");
+  } catch (falha) {
+    mostrarMensagem(campos.mensagemFormulario, falha.erro);
+    return;
+  }
+  mostrarMensagem(campos.mensagemFormulario, "");
+  estado.itens = exemplo.itens.map((item) => ({
+    componente: item.componente,
+    nome: item.nome,
+    material: item.material,
+    materialRotulo: item.material_rotulo,
+    diametro: item.diametro,
+    unidadeQuantidade: item.unidade_quantidade,
+    quantidade: item.quantidade,
+    valorUnitario: item.valor_unitario,
+    imagem: item.imagem,
+  }));
+  mostrarNotaExemplo(exemplo.titulo);
   marcarListaAlterada();
 }
 
@@ -467,9 +480,9 @@ function imprimirMemorial() {
 campos.material.addEventListener("change", atualizarComponentes);
 campos.diametro.addEventListener("change", atualizarComponentes);
 campos.componente.addEventListener("change", aoSelecionarComponente);
-document.addEventListener("mouseover", posicionarPrevia);
 campos.form.addEventListener("submit", adicionarComponente);
 campos.botaoLimpar.addEventListener("click", limparCalculo);
+campos.botaoExemplo.addEventListener("click", carregarExemplo);
 campos.botaoImprimir.addEventListener("click", imprimirMemorial);
 document.querySelectorAll('input[name="exibicao-diametro"]').forEach((radio) => {
   radio.addEventListener("change", () => {

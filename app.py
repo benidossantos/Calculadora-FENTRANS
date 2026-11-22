@@ -9,6 +9,7 @@ from flask import Flask, jsonify, render_template, request, url_for
 from services.calculadora_service import calcular
 from services.dados_service import CAMINHO_PADRAO, BaseReferencia
 from services.erros import ErroCalculadora, ErroValidacao
+from services.exemplos_service import montar_exemplo
 from services.validacao_service import validar_itens
 
 TAMANHO_MAXIMO_REQUISICAO = 64 * 1024
@@ -67,6 +68,14 @@ def create_app(caminho_base=CAMINHO_PADRAO):
             if componente.get("imagem"):
                 componente["imagem"] = url_for("static", filename=componente["imagem"])
         return jsonify(componentes)
+
+    @app.get("/api/exemplo")
+    def exemplo():
+        dados = montar_exemplo(base)
+        for item in dados["itens"]:
+            if item.get("imagem"):
+                item["imagem"] = url_for("static", filename=item["imagem"])
+        return jsonify(dados)
 
     @app.post("/api/calcular")
     def calcular_comprimento():

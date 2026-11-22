@@ -217,3 +217,23 @@ def test_api_componentes_traz_foto_do_material(cliente):
     resposta = cliente.get(joelho["imagem"])
     assert resposta.status_code == 200 and resposta.mimetype.startswith("image/")
     resposta.close()
+
+
+# Exemplo da aula (botão "Carregar exemplo da aula")
+def test_exemplo_da_aula_resulta_no_valor_esperado(base):
+    from services.exemplos_service import EXEMPLO_AULA
+
+    resultado = calcular(validar_itens({"itens": EXEMPLO_AULA["itens"]}, base), base)
+    assert resultado.comprimento_total == EXEMPLO_AULA["resultado_esperado"] == Decimal("17.80")
+
+
+def test_api_exemplo_traz_itens_prontos_para_a_interface(cliente):
+    corpo = cliente.get("/api/exemplo").get_json()
+    assert corpo["resultado_esperado"] == "17.80"
+    assert [i["componente"] for i in corpo["itens"]] == [
+        "saida-entrada-de-canalizacao", "joelho-90", "registro-de-gaveta-aberto", "trecho-reto"]
+    assert [i["valor_unitario"] for i in corpo["itens"]] == ["0.90", "1.20", "0.10", "1"]
+    assert all(i["imagem"].startswith("/static/img/componentes/") for i in corpo["itens"])
+    calculo = cliente.post("/api/calcular", json={"itens": [
+        {k: i[k] for k in ("componente", "material", "diametro", "quantidade")} for i in corpo["itens"]]})
+    assert calculo.get_json()["comprimento_total"] == "17.80"

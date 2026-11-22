@@ -14,11 +14,12 @@ O usuário escolhe material, diâmetro nominal e componente, informa a quantidad
 - Seleção do **diâmetro nominal** em polegadas (1/4" a 14"), com opção de exibir a designação **DN** em mm.
 - Caixa **"O que é comprimento equivalente?"** com a explicação do conceito em linguagem simples e os passos de uso.
 - Lista de **componentes filtrada** pelo material e diâmetro escolhidos, **agrupada por tipo** (joelhos, curvas, tês, registros e válvulas etc.) e mostrando o valor unitário tabelado.
-- **Foto de cada componente**, extraída da coluna "Foto" da planilha para o material escolhido. Ela fica oculta e só aparece ao passar o mouse sobre o seletor de componente ou sobre o nome do item na tabela.
+- **Foto de cada componente**, extraída da coluna "Foto" da planilha para o material escolhido, sempre visível ao lado do seletor e na coluna "Foto" da tabela (como no modelo da disciplina).
+- Botão **"Carregar exemplo da aula"**: preenche a lista com o exercício de 3/4" do material da disciplina (resultado esperado: 17,80 m). O exemplo fica no servidor (`services/exemplos_service.py`) e é coberto por teste.
 - **Quantidade** inteira e positiva para peças. O item *Trecho Reto* aceita metros com até 2 casas decimais (ver Limitações).
 - Vários componentes no mesmo cálculo, inclusive com materiais e diâmetros diferentes; o mesmo componente adicionado de novo soma a quantidade (inclusive os metros de Trecho Reto).
 - **Cálculo automático:** o total é recalculado pelo servidor a cada item adicionado, alterado ou removido, sem botão "Calcular" e sem recarregar a página.
-- Tabela de resultados com componente, material, diâmetro, quantidade, L<sub>eq</sub> unitário e L<sub>eq</sub> do item, e painel em destaque com o **Comprimento Equivalente Total**.
+- Tabela de resultados com foto, componente, material, diâmetro, quantidade, L<sub>eq</sub> unitário e L<sub>eq</sub> do item, e painel em destaque com o **Comprimento Equivalente Total**.
 - Validação no navegador e no servidor, com mensagens claras para quantidade inválida, lista vazia, material, diâmetro ou componente inexistente, combinação sem valor tabelado e JSON malformado.
 - Memorial de cálculo pelo botão **Imprimir / salvar PDF** (usa a impressão do navegador, com data e hora).
 
@@ -48,6 +49,7 @@ Calculadora-FENTRANS/
 │   ├── dados_service.py           # carrega e consulta a base (somente leitura)
 │   ├── validacao_service.py       # valida os itens recebidos
 │   ├── calculadora_service.py     # LE_item = LE_unitário × Q; LE_total = Σ LE_item
+│   ├── exemplos_service.py        # exercício da aula usado pelo botão "Carregar exemplo"
 │   └── erros.py                   # exceções com mensagens para o usuário
 ├── templates/index.html
 ├── static/img/componentes/        # fotos extraídas da planilha (uma por componente e material)
@@ -91,7 +93,7 @@ Abra <http://127.0.0.1:5000> no navegador. O servidor escuta apenas na própria 
 python -m pytest
 ```
 
-Resultado da última execução: **54 testes aprovados**. Eles cobrem os oito cenários obrigatórios com valores reais da planilha (um componente, três unidades, componentes diferentes, remoção, combinação inexistente, quantidades inválidas, lista vazia e precisão), as rotas da API e a conferência das 1.088 células extraídas.
+Resultado da última execução: **56 testes aprovados**. Eles cobrem os oito cenários obrigatórios com valores reais da planilha (um componente, três unidades, componentes diferentes, remoção, combinação inexistente, quantidades inválidas, lista vazia e precisão), o exemplo da aula (17,80 m), as rotas da API e a conferência das 1.088 células extraídas.
 
 ## Fórmula
 
@@ -131,7 +133,7 @@ Os cálculos usam `Decimal` com os valores exatos da tabela, sem arredondamento 
 ## Consultar e atualizar a base de referência
 
 - Consulta rápida: abra `dados/comprimentos_equivalentes.json` ou use a API, por exemplo `GET /api/componentes?material=pvc&diametro=3/4`.
-- Rotas: `GET /api/materiais`, `GET /api/diametros`, `GET /api/componentes?material=&diametro=` e `POST /api/calcular` com corpo `{"itens": [{"componente": "joelho-90", "material": "pvc", "diametro": "3/4", "quantidade": 5}]}`.
+- Rotas: `GET /api/materiais`, `GET /api/diametros`, `GET /api/componentes?material=&diametro=`, `GET /api/exemplo` e `POST /api/calcular` com corpo `{"itens": [{"componente": "joelho-90", "material": "pvc", "diametro": "3/4", "quantidade": 5}]}`.
 - Para atualizar, substitua a planilha em `dados/fonte/`, mantendo o mesmo layout, e rode:
 
   ```bash
