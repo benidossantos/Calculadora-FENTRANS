@@ -2,6 +2,10 @@
 
 Software aberto, em formato de calculadora web, que calcula o **comprimento equivalente** de acessórios de tubulações hidráulicas a partir da tabela de referência da disciplina de Fenômenos de Transporte (Engenharia de Software, Universidade de Vassouras, 2026.2).
 
+**Grupo:** Rafaela Barbosa da Silva, Amanda da Silva Diniz Nogueira, Bernardo dos Santos Rodrigues, Mirela Aparecida do Carmo e Sara Kathleen de Sousa Silva.
+**Professor:** Adauri Silveira Rodrigues Júnior.
+**Licença:** [MIT](LICENSE), código aberto.
+
 O usuário escolhe material, diâmetro nominal e componente, informa a quantidade e obtém o comprimento equivalente de cada item e o total da instalação.
 
 ## Funcionalidades
@@ -27,7 +31,8 @@ O usuário escolhe material, diâmetro nominal e componente, informa a quantidad
 ## Estrutura de pastas
 
 ```
-calculadora-comprimento-equivalente/
+Calculadora-FENTRANS/
+├── LICENSE                        # licença MIT (código aberto)
 ├── app.py                         # Flask: rotas, leitura do JSON da requisição, respostas de erro
 ├── requirements.txt
 ├── README.md
@@ -60,7 +65,8 @@ calculadora-comprimento-equivalente/
 ## Instalação
 
 ```bash
-cd calculadora-comprimento-equivalente
+git clone https://github.com/benidossantos/Calculadora-FENTRANS.git
+cd Calculadora-FENTRANS
 python -m venv .venv
 # Linux/macOS
 source .venv/bin/activate

@@ -1,4 +1,4 @@
-# Etapa 1 — Análise dos arquivos de referência
+# Análise dos arquivos de referência
 
 ## 1. O que cada arquivo traz
 
@@ -48,8 +48,8 @@ Comparei a faixa 3/4"–5" da tabela-imagem com a planilha. A maioria bate, mas 
 | Luva de Redução PVC | 1 1/2" | 0,10 | 0,4 |
 | Luva de Redução Metal ("Aço" no documento) | 1 1/2" | 0,18 | 0,38 |
 
-Consequência prática: o exemplo do documento em metal 1" (total 30,8 m) usa Joelho 90° Metal = 0,8; com a planilha o mesmo cálculo dá 31,08 m. O exercício 3/4" (17,8) bate com a planilha.
-Como o enunciado diz que os valores aplicados estão na planilha e o pedido manda usá-la como fonte, a calculadora usa a planilha sem correções. As divergências ficam documentadas no README.
+Consequência prática: o exemplo do documento em metal 1" (total 30,8 m) usa Joelho 90° Metal = 0,8; com a planilha o mesmo cálculo dá 31,08 m. Além disso, nesse exemplo a válvula está identificada como "válvula gaveta", mas o valor usado (8,2 m) é o do Registro de Globo Metal 1"; com Registro de Gaveta (0,20 m) o total seria 23,08 m. O exercício 3/4" (17,8) bate com a planilha.
+Como o enunciado diz que os valores aplicados estão na planilha, a calculadora usa a planilha sem correções. As divergências ficam documentadas no README.
 
 ### 4.3 Valores suspeitos dentro da própria planilha (preservados)
 - Curva de Transposição Metal 1/2" = 0,87, entre 0,24 (3/8") e 0,48 (3/4"); o PVC no mesmo diâmetro é 0,32.
@@ -57,8 +57,8 @@ Como o enunciado diz que os valores aplicados estão na planilha e o pedido mand
 - Luva de Redução PVC/Metal decresce de 3/4" até 1 1/2" e volta a subir (parte disso também está na tabela dos documentos).
 - Faixas 1/4"–1/2" e 6"–14" não existem na tabela dos documentos; parecem extrapoladas, mas estão na planilha e serão oferecidas.
 
-### 4.4 "Trecho Reto" e quantidade fracionária (pergunta ao Beni)
-A planilha tem `Trecho Reto = 1` por diâmetro, e o exercício do professor usa **10,7** como quantidade (metros de tubo). O pedido exige quantidades inteiras. Padrão adotado: acessórios aceitam só inteiros positivos; `Trecho Reto` aceita metros com até 2 casas decimais. É uma configuração de uma linha, fácil de reverter.
+### 4.4 "Trecho Reto" e quantidade fracionária
+A planilha tem `Trecho Reto = 1` por diâmetro, e o exercício do professor usa **10,7** como quantidade (metros de tubo). Peças são contadas em unidades inteiras, mas o tubo é medido em metros. Padrão adotado: acessórios aceitam só inteiros positivos; `Trecho Reto` aceita metros com até 2 casas decimais. É uma configuração de uma linha, fácil de reverter.
 
 ### 4.5 Diâmetro em mm
 A tabela só traz polegadas. A opção "mm" mostrará a designação **DN** (ISO 6708 / ABNT, ex.: 3/4" ↔ DN 20), sempre identificada como nominal, não como diâmetro interno nem como diâmetro externo do tubo soldável (que em PVC é 25 mm para 3/4").
