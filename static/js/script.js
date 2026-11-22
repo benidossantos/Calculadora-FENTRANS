@@ -1,8 +1,10 @@
 "use strict";
 
 // A interface só monta a lista e exibe valores: todo cálculo é feito pelo backend.
+// O cálculo é pedido automaticamente sempre que a lista muda.
 
 const LIMITE_PECAS = 10000;
+const LIMITE_METROS = 100000;
 const PADRAO_PECAS = /^\d+$/;
 const PADRAO_METROS = /^\d+([.,]\d{1,2})?$/;
 
@@ -12,6 +14,8 @@ const estado = {
   componentes: [],
   itens: [],
   resultado: null,
+  calculando: false,
+  numeroRequisicao: 0,
   exibicaoDiametro: "pol",
 };
 
@@ -30,7 +34,6 @@ const campos = {
   corpoTabela: el("corpo-tabela"),
   listaVazia: el("lista-vazia"),
   contador: el("contador-itens"),
-  botaoCalcular: el("botao-calcular"),
   botaoLimpar: el("botao-limpar"),
   botaoImprimir: el("botao-imprimir"),
   mensagemCalculo: el("mensagem-calculo"),
@@ -72,6 +75,13 @@ function rotuloDiametro(diametro) {
   return estado.exibicaoDiametro === "mm"
     ? `DN ${diametro.dn_mm} (${diametro.rotulo})`
     : diametro.rotulo;
+}
+
+// Soma dois comprimentos em metros (texto com até 2 casas) sem erro de ponto flutuante.
+function somarMetros(a, b) {
+  const centimetros = (texto) => Math.round(Number(String(texto).replace(",", ".")) * 100);
+  const total = centimetros(a) + centimetros(b);
+  return `${Math.floor(total / 100)}.${String(total % 100).padStart(2, "0")}`;
 }
 
 function validarQuantidade(texto, unidadeQuantidade) {
@@ -251,12 +261,19 @@ function adicionarComponente(evento) {
 
   const material = estado.materiais.find((m) => m.id === campos.material.value);
   const diametro = estado.diametros.find((d) => d.id === campos.diametro.value);
+  // O mesmo componente, com o mesmo material e diâmetro, soma na linha que já existe.
   const existente = estado.itens.find(
-    (item) => item.componente === componente.id && item.material === material.id
-      && item.diametro === diametro.id && item.unidadeQuantidade === "un",
+    (item) => item.componente === componente.id && item.material === material.id && item.diametro === diametro.id,
   );
 
-  if (existente && componente.unidade_quantidade === "un") {
+  if (existente && componente.unidade_quantidade === "m") {
+    const soma = somarMetros(existente.quantidade, quantidade);
+    if (Number(soma) > LIMITE_METROS) {
+      mostrarMensagem(campos.mensagemFormulario, `O comprimento máximo por item é ${LIMITE_METROS} m.`);
+      return;
+    }
+    existente.quantidade = soma;
+  } else if (existente) {
     const soma = Number(existente.quantidade) + Number(quantidade);
     if (soma > LIMITE_PECAS) {
       mostrarMensagem(campos.mensagemFormulario, `A quantidade máxima por item é ${LIMITE_PECAS}.`);
@@ -341,9 +358,7 @@ function renderizarItens() {
   const total = estado.itens.length;
   campos.contador.textContent = `${total} ${total === 1 ? "item" : "itens"}`;
   campos.listaVazia.hidden = total > 0;
-  campos.botaoCalcular.disabled = total === 0;
   campos.botaoLimpar.disabled = total === 0;
-  campos.botaoCalcular.title = total === 0 ? "Adicione pelo menos um componente para calcular." : "";
 }
 
 function alterarQuantidade(indice, entrada) {
@@ -351,6 +366,11 @@ function alterarQuantidade(indice, entrada) {
   const problema = validarQuantidade(entrada.value, item.unidadeQuantidade);
   entrada.setAttribute("aria-invalid", problema ? "true" : "false");
   if (problema) {
+    // O total some até a quantidade ser corrigida, para não exibir um valor desatualizado.
+    estado.numeroRequisicao += 1;
+    estado.calculando = false;
+    estado.resultado = null;
+    renderizarResultado();
     mostrarMensagem(campos.mensagemCalculo, `${item.nome}: ${problema}`);
     return;
   }
@@ -370,11 +390,13 @@ function limparCalculo() {
 
 // ---------- Resultado ----------
 
+// Toda mudança na lista dispara um novo cálculo no servidor.
 function marcarListaAlterada() {
   estado.resultado = null;
   mostrarMensagem(campos.mensagemCalculo, "");
   renderizarItens();
   renderizarResultado();
+  if (estado.itens.length > 0) calcular();
 }
 
 function renderizarResultado() {
@@ -388,17 +410,16 @@ function renderizarResultado() {
   campos.valorTotal.textContent = "—";
   if (estado.itens.length === 0) {
     campos.estadoResultado.textContent = "Adicione pelo menos um componente para calcular.";
+  } else if (estado.calculando) {
+    campos.estadoResultado.textContent = "Calculando…";
   } else {
-    campos.estadoResultado.textContent = "Lista alterada. Clique em “Calcular comprimento equivalente”.";
+    campos.estadoResultado.textContent = "Corrija os itens indicados para ver o total.";
     campos.estadoResultado.classList.add("desatualizado");
   }
 }
 
 async function calcular() {
-  if (estado.itens.length === 0) {
-    mostrarMensagem(campos.mensagemCalculo, "Adicione pelo menos um componente para calcular.");
-    return;
-  }
+  if (estado.itens.length === 0) return;
   const invalido = estado.itens.find((item) => validarQuantidade(item.quantidade, item.unidadeQuantidade));
   if (invalido) {
     mostrarMensagem(campos.mensagemCalculo, `Corrija a quantidade de ${invalido.nome} antes de calcular.`);
@@ -412,18 +433,25 @@ async function calcular() {
       quantidade: item.unidadeQuantidade === "m" ? item.quantidade.replace(",", ".") : Number(item.quantidade),
     })),
   };
-  campos.botaoCalcular.disabled = true;
+  // Se a lista mudar durante a requisição, só a resposta mais recente é exibida.
+  const numero = ++estado.numeroRequisicao;
+  estado.calculando = true;
+  renderizarResultado();
+  let resultado = null;
+  let erro = "";
   try {
-    estado.resultado = await requisitar("/api/calcular", {
+    resultado = await requisitar("/api/calcular", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(corpo),
     });
-    mostrarMensagem(campos.mensagemCalculo, "");
   } catch (falha) {
-    estado.resultado = null;
-    mostrarMensagem(campos.mensagemCalculo, falha.erro);
+    erro = falha.erro;
   }
+  if (numero !== estado.numeroRequisicao) return;
+  estado.calculando = false;
+  estado.resultado = resultado;
+  mostrarMensagem(campos.mensagemCalculo, erro);
   renderizarItens();
   renderizarResultado();
 }
@@ -441,7 +469,6 @@ campos.diametro.addEventListener("change", atualizarComponentes);
 campos.componente.addEventListener("change", aoSelecionarComponente);
 document.addEventListener("mouseover", posicionarPrevia);
 campos.form.addEventListener("submit", adicionarComponente);
-campos.botaoCalcular.addEventListener("click", calcular);
 campos.botaoLimpar.addEventListener("click", limparCalculo);
 campos.botaoImprimir.addEventListener("click", imprimirMemorial);
 document.querySelectorAll('input[name="exibicao-diametro"]').forEach((radio) => {

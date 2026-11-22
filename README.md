@@ -16,8 +16,8 @@ O usuário escolhe material, diâmetro nominal e componente, informa a quantidad
 - Lista de **componentes filtrada** pelo material e diâmetro escolhidos, **agrupada por tipo** (joelhos, curvas, tês, registros e válvulas etc.) e mostrando o valor unitário tabelado.
 - **Foto de cada componente**, extraída da coluna "Foto" da planilha para o material escolhido. Ela fica oculta e só aparece ao passar o mouse sobre o seletor de componente ou sobre o nome do item na tabela.
 - **Quantidade** inteira e positiva para peças. O item *Trecho Reto* aceita metros com até 2 casas decimais (ver Limitações).
-- Vários componentes no mesmo cálculo, inclusive com materiais e diâmetros diferentes; o mesmo componente adicionado de novo soma a quantidade.
-- Alteração de quantidade, remoção de itens, limpeza da lista e novo cálculo, sem recarregar a página.
+- Vários componentes no mesmo cálculo, inclusive com materiais e diâmetros diferentes; o mesmo componente adicionado de novo soma a quantidade (inclusive os metros de Trecho Reto).
+- **Cálculo automático:** o total é recalculado pelo servidor a cada item adicionado, alterado ou removido, sem botão "Calcular" e sem recarregar a página.
 - Tabela de resultados com componente, material, diâmetro, quantidade, L<sub>eq</sub> unitário e L<sub>eq</sub> do item, e painel em destaque com o **Comprimento Equivalente Total**.
 - Validação no navegador e no servidor, com mensagens claras para quantidade inválida, lista vazia, material, diâmetro ou componente inexistente, combinação sem valor tabelado e JSON malformado.
 - Memorial de cálculo pelo botão **Imprimir / salvar PDF** (usa a impressão do navegador, com data e hora).
