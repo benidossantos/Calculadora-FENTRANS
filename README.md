@@ -12,7 +12,8 @@ O usuário escolhe material, diâmetro nominal e componente, informa a quantidad
 
 - Seleção de **material** (PVC ou Metal), apenas entre os que existem na planilha.
 - Seleção do **diâmetro nominal** em polegadas (1/4" a 14"), com opção de exibir a designação **DN** em mm.
-- Lista de **componentes filtrada** pelo material e diâmetro escolhidos, mostrando o valor unitário tabelado.
+- Caixa **"O que é comprimento equivalente?"** com a explicação do conceito em linguagem simples e os passos de uso.
+- Lista de **componentes filtrada** pelo material e diâmetro escolhidos, **agrupada por tipo** (joelhos, curvas, tês, registros e válvulas etc.) e mostrando o valor unitário tabelado.
 - **Foto de cada componente**, extraída da coluna "Foto" da planilha para o material escolhido. Ela fica oculta e só aparece ao passar o mouse sobre o seletor de componente ou sobre o nome do item na tabela.
 - **Quantidade** inteira e positiva para peças. O item *Trecho Reto* aceita metros com até 2 casas decimais (ver Limitações).
 - Vários componentes no mesmo cálculo, inclusive com materiais e diâmetros diferentes; o mesmo componente adicionado de novo soma a quantidade.

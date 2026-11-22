@@ -94,6 +94,37 @@ function mostrarMensagem(elemento, texto) {
   elemento.hidden = !texto;
 }
 
+// Grupos do menu de componentes, na ordem em que aparecem.
+const GRUPOS_COMPONENTES = [
+  ["Joelhos", (id) => id.startsWith("joelho") || id === "uniao-com-joelho-90"],
+  ["Curvas", (id) => id.startsWith("curva")],
+  ["Tês e cruzetas", (id) => id.startsWith("te-") || id.startsWith("cruzeta")],
+  ["Registros, válvulas e filtros", (id) => id.startsWith("registro") || id.startsWith("valvula") || id === "filtro-y"],
+  ["Luvas, niples e uniões", (id) => /^(luva|bucha|niple|uniao|engate)/.test(id)],
+  ["Entradas e saídas de canalização", (id) => id.startsWith("saida-entrada")],
+  ["Tubo reto", (id) => id === "trecho-reto"],
+];
+
+function grupoDoComponente(id) {
+  const grupo = GRUPOS_COMPONENTES.find(([, pertence]) => pertence(id));
+  return grupo ? grupo[0] : "Outros";
+}
+
+function preencherSelectAgrupado(select, opcoes, valorAtual) {
+  const grupos = new Map([...GRUPOS_COMPONENTES.map(([nome]) => [nome, []]), ["Outros", []]]);
+  opcoes.forEach((opcao) => grupos.get(grupoDoComponente(opcao.valor)).push(opcao));
+  const elementos = [];
+  grupos.forEach((itens, nome) => {
+    if (itens.length === 0) return;
+    const optgroup = document.createElement("optgroup");
+    optgroup.label = nome;
+    optgroup.append(...itens.map(({ valor, texto }) => new Option(texto, valor)));
+    elementos.push(optgroup);
+  });
+  select.replaceChildren(...elementos);
+  if (opcoes.some((opcao) => opcao.valor === valorAtual)) select.value = valorAtual;
+}
+
 function preencherSelect(select, opcoes, valorAtual) {
   select.replaceChildren(...opcoes.map(({ valor, texto }) => new Option(texto, valor)));
   if (opcoes.some((opcao) => opcao.valor === valorAtual)) select.value = valorAtual;
@@ -138,7 +169,7 @@ async function atualizarComponentes() {
   if (estado.componentes.length === 0) {
     preencherSelect(campos.componente, [{ valor: "", texto: "Nenhum componente disponível para esta combinação" }]);
   } else {
-    preencherSelect(
+    preencherSelectAgrupado(
       campos.componente,
       estado.componentes.map((c) => ({
         valor: c.id,

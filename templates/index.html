@@ -13,6 +13,24 @@
   </header>
 
   <main class="conteudo">
+    <details class="painel explicacao nao-imprimir" open>
+      <summary>O que é comprimento equivalente?</summary>
+      <p>
+        Cada peça de uma tubulação (joelho, curva, registro, válvula) faz a água perder um pouco de pressão,
+        como uma lombada faz um carro perder velocidade. Isso se chama <strong>perda de carga localizada</strong>.
+      </p>
+      <p>
+        O <strong>comprimento equivalente</strong> traduz essa perda em metros de cano reto. Por exemplo, um joelho 90°
+        de PVC de 3/4" atrapalha a água tanto quanto 1,20 m de cano reto. Somando todas as peças, a instalação inteira
+        vira um único cano reto "equivalente", usado depois no cálculo da perda de carga total.
+      </p>
+      <ol class="passos">
+        <li>Escolha o material e o diâmetro do cano.</li>
+        <li>Escolha a peça, informe a quantidade e clique em <em>Adicionar componente</em>.</li>
+        <li>Repita para cada peça. O total aparece no fim da página.</li>
+      </ol>
+    </details>
+
     <section class="painel nao-imprimir" aria-labelledby="titulo-configuracao">
       <h2 id="titulo-configuracao">Adicionar componente</h2>
       <form id="form-componente" novalidate>
@@ -67,8 +85,8 @@
               <th>Material</th>
               <th>Diâmetro</th>
               <th class="numero">Quantidade</th>
-              <th class="numero">L<sub>eq</sub> unitário ({{ unidade }})</th>
-              <th class="numero">L<sub>eq</sub> do item ({{ unidade }})</th>
+              <th class="numero quebra">Comprimento equivalente por unidade ({{ unidade }})</th>
+              <th class="numero quebra">Comprimento equivalente do item ({{ unidade }})</th>
               <th class="nao-imprimir"><span class="sr-only">Ações</span></th>
             </tr>
           </thead>
@@ -89,6 +107,7 @@
       <p class="valor-total"><span id="valor-total">—</span> <span class="unidade">{{ unidade }}</span></p>
       <p id="estado-resultado" class="estado-resultado">Adicione componentes e clique em calcular.</p>
       <p class="formula">L<sub>eq,total</sub> = Σ (L<sub>eq,unitário</sub> × Q)</p>
+      <p class="formula">Para cada peça, multiplica-se a quantidade pelo comprimento equivalente da tabela; depois, soma-se tudo.</p>
       <p id="data-memorial" class="so-imprimir"></p>
     </section>
   </main>

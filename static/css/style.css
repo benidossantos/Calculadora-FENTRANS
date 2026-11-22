@@ -141,6 +141,14 @@ input[aria-invalid="true"] { border-color: var(--erro); background: var(--erro-f
 .tabela input[type="number"] { width: 6.5em; text-align: right; padding: 5px 6px; }
 .tabela tbody tr:nth-child(even) { background: #fafbfc; }
 
+.tabela thead th.quebra { white-space: normal; min-width: 9em; }
+
+.explicacao summary { font-weight: 700; font-size: 1.15rem; cursor: pointer; color: var(--primaria-escura); }
+.explicacao[open] summary { margin-bottom: 8px; }
+.explicacao p { margin: 8px 0; }
+.explicacao .passos { margin: 8px 0 0; padding-left: 1.4em; }
+.explicacao .passos li { margin: 2px 0; }
+
 .lista-vazia { color: var(--texto-suave); text-align: center; margin: 16px 0 0; }
 
 .resultado { background: var(--destaque-fundo); border-color: #b9d3e6; text-align: center; }
