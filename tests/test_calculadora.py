@@ -237,3 +237,22 @@ def test_api_exemplo_traz_itens_prontos_para_a_interface(cliente):
     calculo = cliente.post("/api/calcular", json={"itens": [
         {k: i[k] for k in ("componente", "material", "diametro", "quantidade")} for i in corpo["itens"]]})
     assert calculo.get_json()["comprimento_total"] == "17.80"
+
+
+# Memorial de cálculo (página própria para imprimir / salvar PDF)
+def test_memorial_gera_documento_com_detalhamento_e_total(cliente):
+    import json as _json
+    from services.exemplos_service import EXEMPLO_AULA
+
+    dados = _json.dumps({"itens": EXEMPLO_AULA["itens"]})
+    resposta = cliente.post("/memorial", data={"dados": dados})
+    assert resposta.status_code == 200
+    html = resposta.get_data(as_text=True)
+    assert "Lista de Compras" in html
+    assert "Joelho 90°" in html and "10,70 m" in html and "5 unidades" in html
+    assert "17,80 m" in html
+
+
+def test_memorial_recusa_dados_invalidos(cliente):
+    assert cliente.post("/memorial", data={"dados": "isso não é json"}).status_code == 400
+    assert cliente.post("/memorial", data={"dados": '{"itens": []}'}).status_code == 400

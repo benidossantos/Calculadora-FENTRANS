@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de compras - calculadora FENTRANS - {{ data_arquivo }}</title>
+  <style>
+    @page { size: A4; margin: 16mm 14mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #e9edf1;
+      color: #1f2933;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.45;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .barra {
+      position: sticky; top: 0; z-index: 2;
+      display: flex; justify-content: center; gap: 12px;
+      padding: 12px; background: #14213d;
+    }
+    .barra button {
+      font: inherit; font-weight: 600; cursor: pointer;
+      padding: 10px 22px; border-radius: 8px; border: 0;
+      background: #f2994a; color: #14213d;
+    }
+    .barra button.secundario { background: transparent; color: #fff; border: 1px solid #8ea0bd; }
+    .folha {
+      width: 210mm; min-height: 297mm; margin: 24px auto; padding: 16mm 14mm;
+      background: #fff; box-shadow: 0 8px 28px rgba(20, 33, 61, 0.18);
+    }
+    .cabecalho {
+      display: flex; justify-content: space-between; align-items: flex-end; gap: 16px;
+      padding-bottom: 10px; border-bottom: 3px solid #1d63c4;
+    }
+    .cabecalho .rotulo { margin: 0; font-size: 8.5pt; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #1d63c4; }
+    .cabecalho h1 { margin: 2px 0 0; font-size: 20pt; line-height: 1.15; color: #14213d; }
+    .cabecalho .subtitulo { margin: 2px 0 0; color: #52606d; }
+    .cabecalho .data { text-align: right; font-size: 9pt; color: #52606d; white-space: nowrap; }
+    .info {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4px 24px;
+      margin: 14px 0 4px; padding: 10px 14px;
+      background: #f3f6f9; border-radius: 6px; font-size: 9.5pt;
+    }
+    .info b { color: #14213d; }
+    h2 {
+      margin: 14px 0 6px; font-size: 12pt; color: #14213d;
+      display: flex; align-items: center; gap: 8px;
+    }
+    h2 .num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #1d63c4; color: #fff; font-size: 9.5pt;
+    }
+    p { margin: 0 0 6px; }
+    .formula {
+      margin: 8px 0; padding: 8px 14px; border-left: 4px solid #1d63c4;
+      background: #f3f6f9; font-family: "Cambria Math", Cambria, Georgia, serif; font-size: 12pt;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+    thead th {
+      background: #14213d; color: #fff; font-weight: 600; text-align: left;
+      padding: 6px 8px; font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    tbody td { padding: 5px 8px; border-bottom: 1px solid #dde3ea; vertical-align: middle; }
+    tbody tr:nth-child(even) td { background: #f8fafc; }
+    tfoot td { padding: 7px 8px; font-weight: 700; border-top: 2px solid #14213d; }
+    .n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .c { text-align: center; }
+    .nw { white-space: nowrap; }
+    .caixa { display: inline-block; width: 14px; height: 14px; border: 1.5px solid #52606d; border-radius: 3px; }
+    tbody td { font-size: 10.5pt; padding: 8px; }
+    .foto { width: 40px; height: 40px; object-fit: contain; display: block; margin: 0 auto; }
+    tr { break-inside: avoid; }
+    .resultado {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      margin-top: 14px; padding: 12px 18px; border-radius: 8px;
+      background: #14213d; color: #fff; break-inside: avoid;
+    }
+    .resultado .legenda { margin: 0; font-size: 9.5pt; color: #c3d2e4; }
+    .resultado .valor { margin: 0; font-size: 24pt; font-weight: 700; color: #f2994a; white-space: nowrap; }
+    .resumo { display: flex; gap: 24px; margin-top: 8px; font-size: 9.5pt; color: #52606d; }
+    .rodape {
+      margin-top: 14px; padding-top: 6px; border-top: 1px solid #dde3ea;
+      font-size: 8pt; color: #7b8794; display: flex; justify-content: space-between; gap: 16px;
+    }
+    @media print {
+      body { background: #fff; }
+      .barra { display: none; }
+      .folha { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="barra">
+    <button type="button" onclick="window.print()">Imprimir / salvar PDF</button>
+    <button type="button" class="secundario" onclick="window.close()">Fechar</button>
+  </div>
+
+  <main class="folha">
+    <header class="cabecalho">
+      <div>
+        <p class="rotulo">Fenômenos de Transporte · Universidade de Vassouras</p>
+        <h1>Lista de Compras</h1>
+        <p class="subtitulo">Peças da instalação hidráulica e comprimento equivalente total</p>
+      </div>
+      <div class="data">Emitido em<br><b>{{ gerado_em }}</b></div>
+    </header>
+
+    <section class="info">
+      <div><b>Uso:</b> leve esta lista à loja de materiais hidráulicos</div>
+      <div><b>Itens:</b> {{ memorial.linhas|length }} tipos de peça</div>
+    </section>
+
+    <h2>Peças e materiais</h2>
+    <table>
+      <thead>
+        <tr>
+          <th class="c">✓</th>
+          <th class="c">Foto</th>
+          <th>Peça</th>
+          <th>Material</th>
+          <th>Diâmetro</th>
+          <th class="n">Quantidade</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for linha in memorial.linhas %}
+        <tr>
+          <td class="c"><span class="caixa"></span></td>
+          <td class="c">{% if linha.imagem %}<img class="foto" src="{{ url_for('static', filename=linha.imagem) }}" alt="">{% endif %}</td>
+          <td><b>{{ linha.componente }}</b></td>
+          <td>{{ linha.material }}</td>
+          <td class="nw">{{ linha.diametro }}</td>
+          <td class="n"><b>{{ linha.quantidade }}</b>{% if linha.e_tubo %} de tubo{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="resumo">
+      <span><b>{{ memorial.total_pecas }}</b> peças no total</span>
+      <span><b>{{ memorial.metros_tubo }} m</b> de tubo reto</span>
+    </div>
+
+    <section class="resultado">
+      <div>
+        <p class="legenda">Comprimento equivalente total</p>
+        <p><b>Perdas localizadas convertidas em metros de tubo reto</b></p>
+      </div>
+      <p class="valor">{{ memorial.total }} m</p>
+    </section>
+
+    <footer class="rodape">
+      <span>Calculadora FENTRANS · código aberto no GitHub</span>
+      <span>Cálculo em aritmética decimal exata, sem arredondamentos intermediários.</span>
+    </footer>
+  </main>
+
+  <script>
+    window.addEventListener("load", () => setTimeout(() => window.print(), 400));
+  </script>
+</body>
+</html>

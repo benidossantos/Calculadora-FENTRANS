@@ -21,7 +21,7 @@ O usuário escolhe material, diâmetro nominal e componente, informa a quantidad
 - **Cálculo automático:** o total é recalculado pelo servidor a cada item adicionado, alterado ou removido, sem botão "Calcular" e sem recarregar a página.
 - Tabela de resultados com foto, componente, material, diâmetro, quantidade, L<sub>eq</sub> unitário e L<sub>eq</sub> do item, e painel em destaque com o **Comprimento Equivalente Total**.
 - Validação no navegador e no servidor, com mensagens claras para quantidade inválida, lista vazia, material, diâmetro ou componente inexistente, combinação sem valor tabelado e JSON malformado.
-- **Memorial de cálculo em PDF** pelo botão **Imprimir / salvar PDF**: cabeçalho com disciplina, professor e data e hora; (1) detalhamento de cada conexão com foto, quantidade e comprimento equivalente; (2) lista de compras com as quantidades de cada peça; (3) comprimento equivalente total. Usa a impressão do navegador ("Salvar como PDF").
+- **Lista de compras em PDF** pelo botão **Gerar lista de compras (PDF)**: abre uma página própria, montada pelo servidor (`/memorial`), com as peças (foto, material, diâmetro e quantidade), caixinhas para marcar na loja e o comprimento equivalente total, em uma folha A4. A janela de impressão abre sozinha; escolha "Salvar como PDF".
 
 ## Tecnologias
 
@@ -104,7 +104,7 @@ No plano gratuito o servidor "dorme" quando fica sem uso; o primeiro acesso depo
 python -m pytest
 ```
 
-Resultado da última execução: **56 testes aprovados**. Eles cobrem os oito cenários obrigatórios com valores reais da planilha (um componente, três unidades, componentes diferentes, remoção, combinação inexistente, quantidades inválidas, lista vazia e precisão), o exemplo da aula (17,80 m), as rotas da API e a conferência das 1.088 células extraídas.
+Resultado da última execução: **58 testes aprovados**. Eles cobrem os oito cenários obrigatórios com valores reais da planilha (um componente, três unidades, componentes diferentes, remoção, combinação inexistente, quantidades inválidas, lista vazia e precisão), o exemplo da aula (17,80 m), a lista de compras, as rotas da API e a conferência das 1.088 células extraídas.
 
 ## Fórmula
 
@@ -144,7 +144,7 @@ Os cálculos usam `Decimal` com os valores exatos da tabela, sem arredondamento 
 ## Consultar e atualizar a base de referência
 
 - Consulta rápida: abra `dados/comprimentos_equivalentes.json` ou use a API, por exemplo `GET /api/componentes?material=pvc&diametro=3/4`.
-- Rotas: `GET /api/materiais`, `GET /api/diametros`, `GET /api/componentes?material=&diametro=`, `GET /api/exemplo` e `POST /api/calcular` com corpo `{"itens": [{"componente": "joelho-90", "material": "pvc", "diametro": "3/4", "quantidade": 5}]}`.
+- Rotas: `GET /api/materiais`, `GET /api/diametros`, `GET /api/componentes?material=&diametro=`, `GET /api/exemplo`, `POST /api/calcular` e `POST /memorial` com corpo `{"itens": [{"componente": "joelho-90", "material": "pvc", "diametro": "3/4", "quantidade": 5}]}`.
 - Para atualizar, substitua a planilha em `dados/fonte/`, mantendo o mesmo layout, e rode:
 
   ```bash

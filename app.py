@@ -1,6 +1,7 @@
 """Aplicação Flask da Calculadora de Comprimento Equivalente."""
 
 import json
+from datetime import datetime
 from dataclasses import asdict
 from decimal import Decimal
 
@@ -10,6 +11,7 @@ from services.calculadora_service import calcular
 from services.dados_service import CAMINHO_PADRAO, BaseReferencia
 from services.erros import ErroCalculadora, ErroValidacao
 from services.exemplos_service import montar_exemplo
+from services.memorial_service import montar_memorial
 from services.validacao_service import validar_itens
 
 TAMANHO_MAXIMO_REQUISICAO = 64 * 1024
@@ -85,6 +87,22 @@ def create_app(caminho_base=CAMINHO_PADRAO):
             raise ErroValidacao("Formato inesperado: o corpo da requisição deve ser JSON válido.")
         itens = validar_itens(corpo, base)
         return jsonify(_serializar_resultado(calcular(itens, base)))
+
+    @app.post("/memorial")
+    def memorial():
+        """Memorial de cálculo em página própria, pronto para imprimir ou salvar em PDF."""
+        try:
+            corpo = json.loads(request.form.get("dados", ""), parse_float=Decimal)
+        except ValueError:
+            raise ErroValidacao("Formato inesperado: os dados do memorial devem ser JSON válido.")
+        itens = validar_itens(corpo, base)
+        agora = datetime.now()
+        return render_template(
+            "memorial.html",
+            memorial=montar_memorial(calcular(itens, base), base),
+            gerado_em=agora.strftime("%d/%m/%Y às %H:%M"),
+            data_arquivo=agora.strftime("%d-%m-%Y"),
+        )
 
     @app.errorhandler(ErroCalculadora)
     def tratar_erro_calculadora(erro):

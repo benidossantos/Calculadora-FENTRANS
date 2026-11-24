@@ -489,15 +489,28 @@ function preencherListaCompras() {
   campos.corpoListaCompras.replaceChildren(...linhas);
 }
 
+// Abre o memorial de cálculo numa aba própria, montado pelo servidor como um
+// documento A4 (cabeçalho, método, detalhamento, lista de materiais e total).
 function imprimirMemorial() {
-  const agora = new Date();
-  campos.dataMemorial.textContent = `Gerado em ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR")}.`;
-  preencherListaCompras();
-  // O título da página vira o nome sugerido para o arquivo PDF.
-  const tituloOriginal = document.title;
-  document.title = `Memorial de calculo - comprimento equivalente - ${agora.toLocaleDateString("pt-BR").replaceAll("/", "-")}`;
-  window.print();
-  document.title = tituloOriginal;
+  const formulario = document.createElement("form");
+  formulario.method = "post";
+  formulario.action = "/memorial";
+  formulario.target = "_blank";
+  const dados = document.createElement("input");
+  dados.type = "hidden";
+  dados.name = "dados";
+  dados.value = JSON.stringify({
+    itens: estado.itens.map((item) => ({
+      componente: item.componente,
+      material: item.material,
+      diametro: item.diametro,
+      quantidade: item.unidadeQuantidade === "m" ? item.quantidade.replace(",", ".") : Number(item.quantidade),
+    })),
+  });
+  formulario.append(dados);
+  document.body.append(formulario);
+  formulario.submit();
+  formulario.remove();
 }
 
 // ---------- Eventos ----------
