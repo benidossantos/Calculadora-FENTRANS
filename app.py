@@ -4,6 +4,7 @@ import json
 from datetime import datetime
 from dataclasses import asdict
 from decimal import Decimal
+import os
 
 from flask import Flask, jsonify, render_template, request, url_for
 
@@ -128,4 +129,5 @@ def create_app(caminho_base=CAMINHO_PADRAO):
 
 
 if __name__ == "__main__":
-    create_app().run(host="127.0.0.1", port=5000, debug=False)
+    port = int(os.environ.get("PORT", 5000))
+    create_app().run(host="0.0.0.0", port=port, debug=False)
