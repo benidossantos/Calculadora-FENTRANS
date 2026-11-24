@@ -61,9 +61,26 @@ body {
 }
 .campo { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 0.95rem; }
 
-.rotulo-com-opcao { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.alternador { display: inline-flex; gap: 10px; font-weight: 400; font-size: 0.85rem; color: var(--texto-suave); }
-.alternador label { display: inline-flex; align-items: center; gap: 3px; cursor: pointer; }
+.rotulo-com-opcao { display: flex; justify-content: space-between; align-items: center; gap: 8px; white-space: nowrap; }
+/* Seletor pol/mm em formato de botões (segmented control). */
+.alternador {
+  display: inline-flex;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  overflow: hidden;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.alternador label { position: relative; cursor: pointer; }
+.alternador input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.alternador span { display: block; padding: 3px 12px; color: var(--texto-suave); background: #fff; }
+.alternador label + label span { border-left: 1px solid var(--borda); }
+.alternador input:checked + span { background: var(--primaria); color: #fff; }
+.alternador input:focus-visible + span { outline: 2px solid var(--primaria); outline-offset: -2px; }
+/* A nota do DN fica abaixo do campo sem empurrar o seletor para cima. */
+.campo-diametro { position: relative; }
+.campo-diametro .nota { position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; }
+.campos { padding-bottom: 36px; }
 
 select, input[type="number"] {
   width: 100%;
@@ -158,6 +175,8 @@ input[aria-invalid="true"] { border-color: var(--erro); background: var(--erro-f
 .so-imprimir, .so-imprimir-inline { display: none; }
 
 @media (max-width: 760px) {
+  .campo-diametro .nota { position: static; margin-top: 0; }
+  .campos { padding-bottom: 0; }
   .campos { grid-template-columns: 1fr 1fr; }
   .campo-largo { grid-column: 1 / -1; }
   .painel { padding: 16px; }
